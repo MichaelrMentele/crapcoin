@@ -2,7 +2,8 @@ from django.test import TestCase
 
 
 class TestBlockView(TestCase):
-    def test_can_view_a_single_block
+    def test_can_view_a_single_block(self):
+        raise("Not implemented")
 
 
 class TestBlockChainAPI(TestCase):

@@ -8,9 +8,15 @@ name = "pypi"
 [packages]
 
 django = "*"
+requests = "*"
 
 
 [dev-packages]
 
 ipdb = "*"
 ipython = "*"
+nose = "*"
+faker = "*"
+factory-boy = "*"
+mock = "*"
+vcrpy = "*"
