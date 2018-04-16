@@ -4,6 +4,17 @@ Sauron is the 'all seeing eye' that knows all and sees all. In this case, he doe
 That is Sauron. Sauron is a bit of a misnomer, since the app is completely _blind_ and relies and nodes to report to him.
 
 # Usage
+Sauron provides a request/response aggregator for visualizing the communication of your distributed system.
+
+Sauron has two parts:
+1. Sauron (the aggregator/visualizer)
+2. AllSeeingEye that reports to Sauron
+
+You can start up Sauron just like any other Django project with `python manage.py runserver`.
+
+For reporting, Sauron provides a few easy ways to hook into Django projects. If you're project is something else you will need to report to Sauron yourself.
+
+**Vanilla Reporting**
 ```python
 from sauron import AllSeeingEye
 
@@ -14,3 +25,24 @@ def some_route():
   # ...
   the_eye.see(some_json)
   return some_json
+```
+
+**Wrap Views with Decorator**
+```python
+from sauron import all_seeing_eye
+
+@all_seeing_eye
+def some_route():
+  #...
+  return some_json
+```
+
+**Django Middleware**
+```python
+# with package/app installed...
+# settings.py
+MIDDLEWARE = [
+  # ...
+  'sauron.AllSeeingEye'
+]
+```
