@@ -1,0 +1,8 @@
+<h1>CrapCoin BlockChain Explorer</h1>
+{% if chain %}
+{% for block in chain %}
+<a href="{% url 'block_detail' block.hash_id %}">{{ block.hash_id }}</a>
+{% endfor %}
+{% else %}
+<p>This must be a crap coin... no blocks exist!</p>
+{% endif %}

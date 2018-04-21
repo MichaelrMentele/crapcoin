@@ -9,6 +9,8 @@ name = "pypi"
 
 django = "*"
 requests = "*"
+django-extensions = "*"
+gunicorn = "*"
 
 
 [dev-packages]

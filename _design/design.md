@@ -33,3 +33,6 @@ To recap, using watercooler like `watercooler -x bigloads -y shits --sauron --bo
 - 1 `Sauron` node for reporting
 - 1 `Boss` process to fire nodes randomly to simulate stop faults
 - 1 `watercooler` process that can terminate children processes or bootstrap more nodes into the network
+
+# Gossip Protocol
+The network follows a purely push based gossip protocol in that when something happens a node broadcasts to all known peers, which then forward to all known peers.

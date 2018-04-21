@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.test import Client
 
-from sauron.models import Request
-from sauron.tests.factories import RequestFactory
+from fullnode.models import Request
+from tests.factories import RequestFactory
 
 
 class Sauron(TestCase):
@@ -13,7 +13,7 @@ class Sauron(TestCase):
     def test_index_with_no_requests(self):
         response = self.client.get('/sauron/requests/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'index.html')
+        self.assertTemplateUsed(response, 'requests.html')
         self.assertContains(
             response,
             'No requests have been seen by the eye!'
@@ -25,7 +25,7 @@ class Sauron(TestCase):
 
         response = self.client.get('/sauron/requests/')
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'index.html')
+        self.assertTemplateUsed(response, 'requests.html')
         self.assertContains(response, '<ul>')
 
     def test_creating_request(self):

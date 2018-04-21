@@ -5,7 +5,7 @@ import vcr
 from django.test import TestCase
 from django.http import JsonResponse
 
-from sauron.services import all_seeing_eye, AllSeeingEye
+from fullnode.services import all_seeing_eye, AllSeeingEye
 
 
 class AllSeeingEyeDecoratorTest(TestCase):
@@ -14,14 +14,14 @@ class AllSeeingEyeDecoratorTest(TestCase):
 
     @vcr.use_cassette('sauron/tests/cassettes/test_all_seeing_eye_can_see')
     def test_all_seeing_eye_can_see(self):
-        f = lambda request: JsonResponse({'ttl': 1, 'uuid': 'some_string', 'gossip': 'some gossip'})
-        some_view = all_seeing_eye(f, config={'path': self.path})
+        view = lambda request: JsonResponse({'ttl': 1, 'uuid': 'some_string', 'gossip': 'some gossip'})
+        some_view = all_seeing_eye(view, config={'path': self.path})
         view_response = some_view("some_request")
         self.assertEqual(view_response.status_code, 200)
 
     @vcr.use_cassette('sauron/tests/cassettes/test_sauron_sees')
     def test_seeing(self):
-        eye = AllSeeingEye(config={'path': self.path})
+        eye = AllSeeingEye(Mock(), config={'path': self.path})
         response = eye.see('some request', 'some response')
         self.assertEqual(response.status_code, 200)
         self.assertIn(
@@ -32,7 +32,7 @@ class AllSeeingEyeDecoratorTest(TestCase):
 
 class AllSeeingEyeMiddlewareTest(TestCase):
     def test_as_middleware(self):
-        self.middleware = AllSeeingEye(get_response=Mock())
+        self.middleware = AllSeeingEye(Mock())
         self.middleware.see = Mock()
         self.request = Mock()
         self.request.META = {

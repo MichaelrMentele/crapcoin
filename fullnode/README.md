@@ -16,7 +16,7 @@ For reporting, Sauron provides a few easy ways to hook into Django projects. If 
 
 **Vanilla Reporting**
 ```python
-from sauron import AllSeeingEye
+from fullnode import AllSeeingEye
 
 the_eye = AllSeeingEye(config={'url': 'http://some_url'})
 
@@ -29,7 +29,7 @@ def some_route():
 
 **Wrap Views with Decorator**
 ```python
-from sauron import all_seeing_eye
+from fullnode import all_seeing_eye
 
 @all_seeing_eye
 def some_route():

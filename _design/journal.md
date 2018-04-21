@@ -17,5 +17,23 @@ Likewaise, maybe the CLI app should also be separate...
 For now, probably simplest to just put in the same app as well.
 
 *iteration -4 checklist*
-[ ] test that middleware reports to Sauron on requests
-[ ] write out Sauron stub tests
+[x] test that middleware reports to Sauron on requests
+[x] write out Sauron stub tests
+
+# April 18 857: Just Walls, No Sand
+I guess I've deviated from the plan...? I'm trying to get block validation to work. I should probably focus on Watercooler and Sauron though for debuggability
+
+# April 21 0900:
+
+Okay, what do I need for iteration 0? I have a way to spin up nodes. Now I just need a way to connect messages to Sauron.
+
+Moved everything back into a single app. The split didn't really make sense.
+
+Remember, don't try to break things apart until it is necessary.
+
+The flow I want to test is:
+1. spin up x nodes reporting to sauron instance, knowing of a tracker node
+2. bootstrap from tracker node
+2. create transaction, and see it propogate via gossip
+
+Setup the app using docker so now I can spin up many nodes--each with their own DB isntance. `sudo docker-compose run --service-ports web python manage.py runserver 0.0.0.0:8000`
