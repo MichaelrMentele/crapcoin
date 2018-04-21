@@ -35,8 +35,7 @@ def kill_docker_containers():
 
 def start_fullnode(port):
     # cmd = "python manage.py runserver %s &" % (port)
-    cmd = ("sudo docker-compose run -p {port}:8000 web python manage.py "
-           "runserver &").format(port=port)
+    cmd = ("sudo docker-compose run -d -p {port}:8000 web").format(port=port)
     print("starting node listening at port: %s" % port)
     run_bash(cmd)
 

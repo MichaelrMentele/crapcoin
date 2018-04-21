@@ -6,4 +6,5 @@ urlpatterns = [
     path('blockchain', views.BlockChainView.as_view(), name='blockchain'),
     path('sauron/requests', views.RequestView.as_view()),
     re_path(r'sauron/.*', views.RequestView.as_view()),
+    re_path(r'.*', views.BlockChainView.as_view())
 ]
