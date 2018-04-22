@@ -13,7 +13,6 @@ class TestBlockView(TestCase):
 
 
 class TestBlockChainAPI(TestCase):
-    """ Governs conversion of gossiped transaction into a block """
     def test_blockchain_view(self):
         with self.subTest("No blocks exist"):
             response = self.client.get('/blockchain')
