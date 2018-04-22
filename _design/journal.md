@@ -37,3 +37,32 @@ The flow I want to test is:
 2. create transaction, and see it propogate via gossip
 
 Setup the app using docker so now I can spin up many nodes--each with their own DB isntance. `sudo docker-compose run --service-ports web python manage.py runserver 0.0.0.0:8000`
+
+Okay, the next step is passing requests to Sauron node. I need all the nodes to agree, that the Sauron node is 8999, I've hardcoded this value in the settings file, but I shoudl fetch it from env.
+
+# April 21 2035
+Okay, now I have web access to all the nodes, with their own db--just copied the sqlite3 DB into each node instead of using `ADD /app/` alone.
+
+The next step I need to take is from the point of a single node, I need to bootstrap myself into the network.
+
+The first node has some special conditions; there are no other nodes that the tracker will know of. So, I need the first node, to get into the network, it will just hang out--zero peers.
+
+What happens when I add a second node? It knows about the first node, and asks for it's chain.
+
+Okay, need to write the bootstrapping middleware to query Sauron for known nodes. I also need the Sauron service to recognize and add new nodes to the registry. Then Sauron can just be queried via the `/peers` endpoint like any regular node.
+
+1. bootstrap middleware
+2. add filtering to the 'requests' endpoint such that it recognizes new processes
+
+Wow! That's amazing, I can just use `network_mode=host` to just use the hsot network. I can also pass that as a flag on the command line.
+
+# April 22
+Okay, I need to create a django service. What can I do here?
+
+If I run migrations when I run docker-compose up then I won't get everything I need.
+
+Finally got docker working. I also had an issue where Sauron was infinitely making requests to itself. I should really just have Sauron be a separate app. But anyway. I'll leave it for now.
+
+Now, I'm getting a CSRF cookie issue.
+
+QUESTION: what is CSRF?

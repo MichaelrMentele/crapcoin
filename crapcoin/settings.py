@@ -45,7 +45,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -125,4 +124,5 @@ STATIC_URL = '/static/'
 ##########
 # Config #
 ##########
-SAURON_URL = 'localhost:8999'
+SAURON_URL = os.getenv('SAURON_URL', 'http://localhost:8999')
+IS_SAURON = os.getenv('IS_SAURON')

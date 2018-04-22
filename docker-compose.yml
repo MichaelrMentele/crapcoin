@@ -3,5 +3,19 @@ version: '3'
 services:
   web:
     build: .
-    command: python /app/manage.py migrate --no-input
-    command: python /app/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./crapcoin:/app/crapcoin
+      - ./fullnode:/app/fullnode
+      - ./start.sh:/app/start.sh
+    network_mode: host
+
+  sauron:
+    build: .
+    volumes:
+      - ./crapcoin:/app/crapcoin
+      - ./fullnode:/app/fullnode
+      - ./start.sh:/app/start.sh
+    network_mode: host
+    environment:
+      - IS_SAURON=True
+      - PORT=8999
