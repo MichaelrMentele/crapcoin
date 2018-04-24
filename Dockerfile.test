@@ -13,13 +13,16 @@ ENV SAURON_URL=http://localhost:8999
 RUN mkdir /app
 WORKDIR /app
 ADD . /app
+RUN chmod 664 /app
+
+# Install python packages
+RUN pip3 install pipenv
+RUN pipenv install --dev --system
+RUN pipenv install --system
 
 # Create fresh db
 RUN rm -f -- db.sqlite3
 RUN touch db.sqlite3
-
-RUN pip3 install pipenv
-RUN pipenv install --system
 
 EXPOSE $PORT
 

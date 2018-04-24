@@ -25,15 +25,15 @@ class AllSeeingEye:
 
     def __call__(self, request, *params, **kwargs):
         response = self.get_response(request, *params, **kwargs)
-        self.see(request, response)
+        if not self.config.get('IS_SAURON') and self.config.get('SAURON_URL'):
+            self.see(request, response)
         return response
 
     def see(self, request, response):
         content = {'request': request, 'response': response}
-        if not self.config.get('IS_SAURON') and self.config.get('SAURON_URL'):
-            url = self.config.get('SAURON_URL')
-            print('Reporting to Sauron at %s!' % url)
-            try:
-                return requests.post(url, content)
-            except requests.exceptions.ConnectionError:
-                print('Failed to report to Sauron; could not connect!')
+        url = self.config.get('SAURON_URL') + '/sauron/requests'
+        print('Reporting to Sauron at %s!' % url)
+        try:
+            return requests.post(url, content)
+        except requests.exceptions.ConnectionError:
+            print('Failed to report to Sauron; could not connect!')
