@@ -1,5 +1,6 @@
 from functools import wraps
 import requests
+import json
 
 from crapcoin.settings import SAURON_URL, IS_SAURON
 
@@ -30,7 +31,21 @@ class AllSeeingEye:
         return response
 
     def see(self, request, response):
-        content = {'request': request, 'response': response}
+        request_data = {
+            'body': request.body.decode('utf-8'),
+            'uri': request.get_raw_uri(),
+            'host': request.get_host(),
+            'port': request.get_port(),
+            'method': request.method,
+        }
+        response_data = {
+            'content': response.content.decode('utf-8'),
+            'status_code': response.status_code,
+        }
+        content = json.dumps({
+            'request': request_data,
+            'response': response_data,
+        })
         url = self.config.get('SAURON_URL') + '/sauron/requests'
         print('Reporting to Sauron at %s!' % url)
         try:

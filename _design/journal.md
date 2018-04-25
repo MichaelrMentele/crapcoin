@@ -66,3 +66,8 @@ Finally got docker working. I also had an issue where Sauron was infinitely maki
 Now, I'm getting a CSRF cookie issue.
 
 QUESTION: what is CSRF?
+
+# April 23
+Alright, got sauron working. Stopped the infinite loop of request where sauron was reporting to itself--should really have it be its own service.
+
+Now. Next I need to work on my request logging. Make sure useful invormation is being passed to Sauron and make it decent looking.
