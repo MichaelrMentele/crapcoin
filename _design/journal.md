@@ -71,3 +71,8 @@ QUESTION: what is CSRF?
 Alright, got sauron working. Stopped the infinite loop of request where sauron was reporting to itself--should really have it be its own service.
 
 Now. Next I need to work on my request logging. Make sure useful invormation is being passed to Sauron and make it decent looking.
+
+# April 24
+Okay. Not even to worry about signing transactions right now. Just going to assume everyone is honest. I can worry about signing later. For now I will just make transactions by 'sending' money to a port number.
+
+Money is sent to an 'address'. This is then 'mined' into a block with PoW. My model for transactions is a naive account based model where we don't guard against replay attacks.

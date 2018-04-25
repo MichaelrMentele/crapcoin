@@ -1,4 +1,5 @@
 from fullnode.models import Block
+import hashlib
 
 
 class BlockChain():
@@ -11,9 +12,10 @@ class BlockChain():
         except IndexError:
             self.head = self._create_genesis_block()
 
-    def mint(self, content):
+    def mint(self, **kwargs):
         """ Mines a new block and adds it to the chain. """
         previous_hash = self.head.hash_id
+        block = Block.objects.build
         block = self._mine(content)
 
         self.head = block
@@ -36,7 +38,7 @@ class BlockChain():
 
     # PRIVATE
 
-    def _mine(self, content):
+    def _mine(self, block):
         """
         Finds a one use number aka nonce that hashes together with the
         previous hash and content of the current hash into a new hash that
@@ -48,13 +50,11 @@ class BlockChain():
             nonce = random.random() * 2**256
             result = self.head.hash(
                 previous_hash=self.head.hash_id,
-                content=content,
                 nonce=nonce
             )
             if(self._is_pow_solution(result)):
                 block = Block.objects.create(
                     previous_hash=self.head.hash_id,
-                    content=content,
                     nonce=nonce,
                 )
                 return block
@@ -84,17 +84,3 @@ class BlockChain():
             previous_hash="genesis",
             nonce="genesis"
         )
-
-
-class Transaction:
-    def __init__(self, sender_pk, reciever_pk, utxo, stxo):
-        self.sender_pk = sender_pk
-        self.reciever_pk = reciever_pk
-        self.utxo = utxo
-        self.stxo = stxo
-
-    def hash_transaction(self):
-        raise
-
-    def validate(self):
-        raise

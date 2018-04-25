@@ -9,6 +9,9 @@ class BlockView(View):
         block = Block.objects.get(hash_id=hash_id)
         return render(request, 'block.html', {'block': block})
 
+    def post(self, request):
+        import ipdb; ipdb.set_trace()
+
 
 class BlockChainView(View):
     def get(self, request):
