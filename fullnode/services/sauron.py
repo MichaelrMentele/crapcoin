@@ -1,8 +1,12 @@
 from functools import wraps
 import requests
 import json
+import logging
 
 from crapcoin.settings import SAURON_URL, IS_SAURON
+
+
+logger = logging.getLogger(__name__)
 
 
 def all_seeing_eye(func, config=None):
@@ -26,7 +30,10 @@ class AllSeeingEye:
 
     def __call__(self, request, *params, **kwargs):
         response = self.get_response(request, *params, **kwargs)
+        logger.info("Reporting too sauron...")
+        logger.info(self.config)
         if not self.config.get('IS_SAURON') and self.config.get('SAURON_URL'):
+            logger.info("In sauron")
             self.see(request, response)
         return response
 
@@ -47,8 +54,8 @@ class AllSeeingEye:
             'response': response_data,
         })
         url = self.config.get('SAURON_URL') + '/sauron/requests'
-        print('Reporting to Sauron at %s!' % url)
+        logger.info('Reporting to Sauron at %s!' % url)
         try:
             return requests.post(url, content)
         except requests.exceptions.ConnectionError:
-            print('Failed to report to Sauron; could not connect!')
+            logger.error('Failed to report to Sauron; could not connect!')

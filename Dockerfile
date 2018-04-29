@@ -1,14 +1,5 @@
 FROM python:3.6.4
 
-ENV PYTHONUNBUFFERED 1
-
-# Default port number for entrypoint
-ENV PORT=8000
-
-# Optional arguments for configuring Sauron/non-sauron nodes
-ENV IS_SAURON=False
-ENV SAURON_URL=http://localhost:8999
-
 # Copy over code files
 RUN mkdir /app
 WORKDIR /app
@@ -23,6 +14,16 @@ RUN pipenv install --system
 # Create fresh db
 RUN rm -f -- db.sqlite3
 RUN touch db.sqlite3
+RUN python manage.py migrate
+
+ENV PYTHONUNBUFFERED 1
+
+# Default port number for entrypoint
+ENV PORT=8000
+
+# Optional arguments for configuring Sauron/non-sauron nodes
+ENV SAURON_URL=http://localhost:8999
+
 
 EXPOSE $PORT
 

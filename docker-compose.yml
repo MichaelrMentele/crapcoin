@@ -17,5 +17,5 @@ services:
       - ./start.sh:/app/start.sh
     network_mode: host
     environment:
-      - IS_SAURON=True
+      - IS_SAURON=1
       - PORT=8999

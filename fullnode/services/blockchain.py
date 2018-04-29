@@ -1,86 +1,73 @@
+""" The methods in this module represent behaviors for the conceptual object,
+a blockchain, that manages linking blocks together."""
 from fullnode.models import Block
-import hashlib
+from fullnode.services.chainvalidator import ChainValidator
 
 
-class BlockChain():
-    """ An ephemeral object that manages linked blocks """
-    DIFFICULTY = 2
+class BlockChain:
+    def __init__(
+        self,
+        block_model=Block,
+        validator=ChainValidator,
+        miner=None,
+        payee=None,
+    ):
+        self.block_model = block_model
+        self.validator = validator()
+        #self.miner = miner()
 
-    def __init__(self):
-        try:
-            self.head = Block.objects.all().order_by('-created_at')[0]
-        except IndexError:
-            self.head = self._create_genesis_block()
-
-    def mint(self, **kwargs):
-        """ Mines a new block and adds it to the chain. """
-        previous_hash = self.head.hash_id
-        block = Block.objects.build
-        block = self._mine(content)
-
-        self.head = block
-        return block
-
-    def is_valid_block(self, block):
-        # get the heads hash_id
-        # hash new block with nonce, check solution
-        # if valid, self.head = new_block
-        # save the new_block
-        if Block.objects.exists(hash_id=block.hash_id):
-            return True
-        elif self.is_valid_block(head):
-            self.validate_blockchain(self._previous_block(head))
-
-        raise
-
-    def is_genesis(self, block):
-        return block.hash_id == "genesis"
-
-    # PRIVATE
-
-    def _mine(self, block):
-        """
-        Finds a one use number aka nonce that hashes together with the
-        previous hash and content of the current hash into a new hash that
-        has the number of leading zeros equal to the DIFFICULTY attribute.
-        """
-        import random
-
-        while True:
-            nonce = random.random() * 2**256
-            result = self.head.hash(
-                previous_hash=self.head.hash_id,
-                nonce=nonce
-            )
-            if(self._is_pow_solution(result)):
-                block = Block.objects.create(
-                    previous_hash=self.head.hash_id,
-                    nonce=nonce,
-                )
-                return block
-
-    def _is_pow_solution(self, new_hash):
-        """ Checks whether a new hash has the correct number of leading zeros """
-        count = 0
-        for c in new_hash:
-            if c == '0':
-                count += 1
-                if count >= self.DIFFICULTY:
-                    return True
-            else:
-                return False
-
-    def _previous_block(self, block=None):
-        block = block or self.head
-        hash_id = block.previous_hash
-        if not self.is_genesis(block):
-            return Block.objects.get(hash_id=hash_id)
-        else:
-            return None
-
-    def _create_genesis_block(self):
-        return Block.objects.create(
-            content="genesis",
-            previous_hash="genesis",
-            nonce="genesis"
+    def genesis(self, payee):
+        return self.block_model.objects.create(
+            payee=payee,
+            **self.block_model.genesis_data(),
         )
+
+    def fork_choice(self, new_chain):
+        """ Replace or ignore this new blockchain.
+
+        If the suggested blockchain is longer and valid. Delete the current
+        chain and install the new chain.
+
+        Otherwise raise a ValueError exception.
+
+        Args:
+            new_chain (list[DeserializedObject..]): Deserialized blocks.
+
+        Returns:
+            blockchain (Queryset): Blocks in the blockchain ordered by number.
+        """
+        blocks = [b.object for b in new_chain]
+        blocks.sort(key=lambda block: block.number)
+        if (len(blocks) > Block.objects.count() and self.validator.is_valid_chain(blocks)):
+            Block.objects.all().delete()
+            for block in blocks:
+                block.save()
+        return Block.objects.all()
+
+    def add_block(self, block):
+        if self.block_model.objects.count() == 0:
+            self.genesis(block.payee)
+        #self.validator.validate_block()
+        block.previous_hash = self.last().hash_id
+        block.save()
+
+        return self.block_model.objects.all()
+
+    def mint(self, **block_fields):
+        """ Mines a new block and adds it to the chain. """
+        previous_hash = self.block_model.objects.order_by('-number').first()
+        block = Block(previous_hash=previous_hash, **block_fields)
+        chain = self.minder.mine(block)
+        return chain
+
+    def difficulty(self):
+        """ Currently, this returns the required number of leading zeros for
+        proof of work.
+
+        At the moment it is static, but in the future it could use the block
+        time of the prior block for computing a new difficulty.
+        """
+        return 2
+
+    def last(self):
+        return self.block_model.objects.order_by('-created_at')[0]

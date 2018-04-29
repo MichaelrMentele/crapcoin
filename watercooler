@@ -9,6 +9,7 @@ watercooler -x fullnodes
 import sys
 import subprocess
 import time
+import requests
 
 
 def run_bash(cmd):
@@ -25,45 +26,53 @@ def kill_on_port(port):
         pass
 
 
-def kill_docker_containers():
-    print("Stopping and killing all containers...")
-    stop_cmd = "sudo docker stop $(sudo docker ps -a -q)"
-    run_bash(stop_cmd)
-    rm_cmd = "sudo docker rm $(sudo docker ps -a -q)"
-    run_bash(rm_cmd)
+class Boss:
+    @staticmethod
+    def fire_all():
+        print("The boss is firing everyone around the watercooler...")
+        stop_cmd = "sudo docker stop $(sudo docker ps -a -q)"
+        run_bash(stop_cmd)
+        rm_cmd = "sudo docker rm $(sudo docker ps -a -q)"
+        run_bash(rm_cmd)
 
+    @staticmethod
+    def hire_node(port, opt='d'):
+        # cmd = "python manage.py runserver %s &" % (port)
+        cmd = ("sudo docker-compose run -{opt}e PORT={port} "
+               "web /app/start.sh").format(port=port, opt=opt)
+        print("Boss hired at port: %s" % port)
+        time.sleep(0.5)
+        run_bash(cmd)
 
-def start_fullnode(port, opt='d'):
-    # cmd = "python manage.py runserver %s &" % (port)
-    cmd = ("sudo docker-compose run -{opt}e PORT={port} "
-           "web /app/start.sh").format(port=port, opt=opt)
-    print("starting node listening at port: %s" % port)
-    run_bash(cmd)
+    @staticmethod
+    def hire_sauron(port=None, opt="d"):
+        port = port or 8999
+        cmd = ("sudo docker-compose run -{opt}e PORT={port} "
+               "sauron /app/start.sh").format(port=port, opt=opt)
+        time.sleep(0.7)
+        run_bash(cmd)
+        print("Boss hired Sauron")
 
-
-def start_sauron(port=None, opt="d"):
-    port = port or 8999
-    cmd = ("sudo docker-compose run -{opt}e PORT={port} "
-           "sauron /app/start.sh").format(port=port, opt=opt)
-    print("Starting up Sauron")
-    run_bash(cmd)
+    @staticmethod
+    def tell_tracker(port):
+        requests.post('http://localhost:8999/api/peer/create', {'port': port})
+        print("Boss told the tracker about hiring {}".format(port))
 
 
 if __name__ == "__main__":
     args = sys.argv
     if args[1] == "clean":
-        kill_docker_containers()
+        Boss.fire_all()
     elif args[1] == "sauron":
-        start_sauron(opt='')
+        Boss.hire_sauron(opt='')
     elif args[1] == "node":
-        start_fullnode(8001, opt='')
-    else:
-        nodes = args[1]
-
-        kill_docker_containers()
+        Boss.tell_tracker(8001)
+        Boss.hire_node(8001, opt='')
+    elif args[1] == "testnet":
+        nodes = args[2]
+        Boss.fire_all()
+        Boss.hire_sauron()
         for n in range(0, int(nodes)):
             port = 8000 + n
-            start_fullnode(port)
-            time.sleep(1)
-
-        start_sauron()
+            Boss.hire_node(port)
+            Boss.tell_tracker(port)

@@ -1,8 +1,27 @@
-<div class="block">
-  <h3>{{ block.hash_id }}</h3>
-  <ul>
-    <li>Nonce: {{ block.nonce }}</li>
-    <li>Content: {{ block.content }}</li>
-    <li>Previous Hash: {{ block.previous_hash }}</li>
-  </ul>
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col s12">
+    <div class="card">
+      <div class="card-content">
+        <div class="card-title">
+          <h2>Block Number {{ crap_block.number}}</h2>
+          <span>Hash Id: {{ crap_block.hash_id }}</span>
+        </div>
+        <ul>
+          <li>Nonce: {{ crap_block.nonce }}</li>
+          <li>
+            Previous Block: <a href="/block/{{crap_block.previous_hash}}">
+              {{ crap_block.previous_hash }}
+            </a>
+          </li>
+          <br>
+          <li>From:   {{ crap_block.payer }}</li>
+          <li>To:     {{ crap_block.payee }}</li>
+          <li>Amount: {{ crap_block.amount }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
+{% endblock %}

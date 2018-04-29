@@ -23,10 +23,9 @@
               <thead>
                 <tr>
                   <th>Node</th>
-                  <th>To</th>
-                  <th>Uri</th>
-                  <th>Content</th>
-                  <th>Status</th>
+                  <th>Request Method</th>
+                  <th>Request Uri</th>
+                  <th>Response Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -35,7 +34,6 @@
                   <td>{{ req.host }}</td>
                   <td>{{ req.method}}</td>
                   <td>{{ req.uri }}</td>
-                  <td>{{ resp.content }}</td>
                   <td>{{ resp.status_code }}</td>
                 </tr>
                 {% endfor %}

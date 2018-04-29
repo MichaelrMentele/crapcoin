@@ -7,18 +7,31 @@ from fullnode.forms import BlockCreateForm
 from fullnode.models import Block
 
 
+class BlockView(View):
+    def get(self, request, hash_id):
+        block = Block.objects.get(hash_id=hash_id)
+        return render(request, 'block.html', {'crap_block': block})
+
+    def post(self, request):
+        import ipdb; ipdb.set_trace()
+
+
 class BlockCreateView(View):
     def post(self, request):
+        """ Used for internal transactions where this node creates a
+        transaction. """
         form = BlockCreateForm(request.POST)
         if form.is_valid():
-            block = Block.objects.create(
+            block = Block(
                 payee=form.data['payee'],
                 payer=form.data['payer'],
                 amount=form.data['amount'],
             )
-            Gossip.all_about_it(block)
+        try:
+            chain = BlockChain().add_block(block)
+            Gossip.all_about_it(chain)
             return redirect('blockchain')
-        else:
+        except ValueError:
             return HttpResponse("Invalid form--did you include all fields?")
 
     def get(self, request):

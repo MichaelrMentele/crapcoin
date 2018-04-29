@@ -10,14 +10,18 @@ class Block(models.Model):
     signature = models.CharField(max_length=1024)
 
     # Block data
-    number = models.IntegerField()
+    hash_id = models.CharField(max_length=1024, unique=True, db_index=True)
+    number = models.IntegerField(db_index=True)
     previous_hash = models.CharField(max_length=1024)
     nonce = models.CharField(max_length=1024)
-    hash_id = models.CharField(max_length=1024)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        self.number = 1
+        if self.previous_hash == "genesis":
+            self.number = 1
+        else:
+            prev_block = Block.objects.get(hash_id=self.previous_hash)
+            self.number = prev_block.number + 1
         self.hash_id = self.compute_hash_id()
         super().save(*args, **kwargs)
 
@@ -26,8 +30,17 @@ class Block(models.Model):
         return self.hash(self.previous_hash, txn, self.nonce)
 
     def hash(self, *args):
-        hashables = [arg.encode('utf-8') for arg in args]
+        hashables = [str(arg).encode('utf-8') for arg in args]
         return hashlib.sha256(b"||".join(hashables)).hexdigest()
+
+    def genesis_data():
+        return dict(
+            payer="coinbase",
+            amount=100,
+            signature="genesis",
+            previous_hash="genesis",
+            nonce="genesis"
+        )
 
     def is_valid(self):
         """ Recurses through all past blocks and validates them.

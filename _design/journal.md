@@ -76,3 +76,31 @@ Now. Next I need to work on my request logging. Make sure useful invormation is 
 Okay. Not even to worry about signing transactions right now. Just going to assume everyone is honest. I can worry about signing later. For now I will just make transactions by 'sending' money to a port number.
 
 Money is sent to an 'address'. This is then 'mined' into a block with PoW. My model for transactions is a naive account based model where we don't guard against replay attacks.
+
+# April 25
+I can create 'blocks' and view the 'chain'.
+
+Basic gossip is the next step. Then I need to actually chain blocks together. Finally, I need to add the state management for transactions.
+
+To add, gossip I need to add the gossip class, spin up another node. For now, I can just create one peer in the DB. Validate that a request hits them when a block is created.
+
+- block gossiping
+- chain validation & chaining of blocks with 'mining'
+- testnet & pk generation--like testrpc
+- signing transactions & tracking account state
+
+Okay, I ahve block gossipping now. But I'm not bootstrapping new nodes into the system, so they don't have a way to get new peers.
+
+When I start up, I should ask the tracker node for a peer.
+
+# April 28
+Now, I want to create a block. When that block gets created I need to rebroadcast to all the other blocks. So right now, I just want to verify I can create blocks and they shwo up on the other nodes.
+
+Then I want to add validation of pow. Then transactions.
+
+# Reflections
+- It was a mistake to write stubs for ALL the tests. I should have created a simple outline somewhere that was high level. Then from that scoped out specific tests one at a time.
+- Started too generic; overbuilt things
+- Docker is nice, but also added an extra layer of complexity
+- Having my tracker in the same codebase was a pain, because I had to be really vigilant for infinite loops
+- I should have actually completed the gossip protocol as a stand alone app first
