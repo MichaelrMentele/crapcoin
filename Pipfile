@@ -7,10 +7,14 @@ name = "pypi"
 
 [packages]
 
-django = "*"
-
-
-[dev-packages]
-
+Django = "*"
+requests = "*"
+django-extensions = "*"
+gunicorn = "*"
 ipdb = "*"
 ipython = "*"
+nose = "*"
+Faker = "*"
+factory_boy = "*"
+mock = "*"
+vcrpy = "*"

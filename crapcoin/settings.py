@@ -27,7 +27,34 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'fullnode': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,17 +64,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'fullnode'
+    'django_extensions',
+    'fullnode',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'fullnode.services.AllSeeingEye',
+    'fullnode.services.Bootstrapper',
 ]
 
 ROOT_URLCONF = 'crapcoin.urls'
@@ -119,3 +148,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+##########
+# Config #
+##########
+SAURON_URL = os.getenv('SAURON_URL', 'http://localhost:8999')
+IS_SAURON = os.getenv('IS_SAURON', 0)
+TRACKER_URL = SAURON_URL
+IS_TRACKER = IS_SAURON

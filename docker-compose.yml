@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    volumes:
+      - ./crapcoin:/app/crapcoin
+      - ./fullnode:/app/fullnode
+      - ./start.sh:/app/start.sh
+    network_mode: host
+
+  sauron:
+    build: .
+    volumes:
+      - ./crapcoin:/app/crapcoin
+      - ./fullnode:/app/fullnode
+      - ./start.sh:/app/start.sh
+    network_mode: host
+    environment:
+      - IS_SAURON=1
+      - PORT=8999

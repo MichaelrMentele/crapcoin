@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+"""
+Manage nodes.
+- start nodes
+- kill nodes
+
+watercooler -x fullnodes
+"""
+import sys
+import subprocess
+import time
+import requests
+
+
+def run_bash(cmd):
+    subprocess.call(['bash', '-c', cmd])
+
+
+def kill_on_port(port):
+    print("Cleaning up port: %s" % port)
+    try:
+        cmd = "fuser -k -n tcp %s" % port
+        run_bash(cmd)
+    except FileNotFoundError:
+        # Port is already clean
+        pass
+
+
+class Boss:
+    @staticmethod
+    def fire_all():
+        print("The boss is firing everyone around the watercooler...")
+        stop_cmd = "sudo docker stop $(sudo docker ps -a -q)"
+        run_bash(stop_cmd)
+        rm_cmd = "sudo docker rm $(sudo docker ps -a -q)"
+        run_bash(rm_cmd)
+
+    @staticmethod
+    def hire_node(port, opt='d'):
+        # cmd = "python manage.py runserver %s &" % (port)
+        cmd = ("sudo docker-compose run -{opt}e PORT={port} "
+               "web /app/start.sh").format(port=port, opt=opt)
+        print("Boss hired at port: %s" % port)
+        time.sleep(0.5)
+        run_bash(cmd)
+
+    @staticmethod
+    def hire_sauron(port=None, opt="d"):
+        port = port or 8999
+        cmd = ("sudo docker-compose run -{opt}e PORT={port} "
+               "sauron /app/start.sh").format(port=port, opt=opt)
+        time.sleep(0.7)
+        run_bash(cmd)
+        print("Boss hired Sauron")
+
+    @staticmethod
+    def tell_tracker(port):
+        requests.post('http://localhost:8999/api/peer/create', {'port': port})
+        print("Boss told the tracker about hiring {}".format(port))
+
+
+if __name__ == "__main__":
+    args = sys.argv
+    if args[1] == "clean":
+        Boss.fire_all()
+    elif args[1] == "sauron":
+        Boss.hire_sauron(opt='')
+    elif args[1] == "node":
+        Boss.tell_tracker(8001)
+        Boss.hire_node(8001, opt='')
+    elif args[1] == "testnet":
+        nodes = args[2]
+        Boss.fire_all()
+        Boss.hire_sauron()
+        for n in range(0, int(nodes)):
+            port = 8000 + n
+            Boss.hire_node(port)
+            Boss.tell_tracker(port)

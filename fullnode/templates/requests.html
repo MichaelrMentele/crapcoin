@@ -1,0 +1,50 @@
+.<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+
+    <title>Sauron Watches...</title>
+  </head>
+  <body>
+    <div class="row">
+      <div class="col s12">
+        <div class='card'>
+          <div class='card-panel red darken-1'>
+              <h1 class='center white-text'>Requests and Responses</h1>
+          </div>
+          <div class='card-content'>
+            {% if request_responses %}
+            <table class="striped highlight">
+              <thead>
+                <tr>
+                  <th>Node</th>
+                  <th>Request Method</th>
+                  <th>Request Uri</th>
+                  <th>Response Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for req, resp in request_responses %}
+                <tr>
+                  <td>{{ req.host }}</td>
+                  <td>{{ req.method}}</td>
+                  <td>{{ req.uri }}</td>
+                  <td>{{ resp.status_code }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% else %}
+            <p>No requests have been seen by the eye!</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
